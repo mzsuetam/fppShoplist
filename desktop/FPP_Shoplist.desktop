@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=FPP_Shoplist
+#Version=v1.0
+Icon=/home/m_zsuetam/prog/python/fppshoplist/resources/icon.png
+X-Icon-Path=home/m_zsuetam/prog/python/fppshoplist/resources/icon.png
+Exec="/home/m_zsuetam/prog/python/fppshoplist/desktop/fppshoplist_run.sh"
+Terminal=false
+Type=Application

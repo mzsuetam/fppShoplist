@@ -14,8 +14,8 @@
 ####	              	   USTAWIENIA EKRANU                    ####
 ####################################################################
 # WYSOKOŚĆ I SZEROKOŚĆ EKRANU:
-WINDOW_HEIGHT=1000
-WINDOW_WIDTH=800
+WINDOW_HEIGHT=960	
+WINDOW_WIDTH=1280
 # SZEROKOŚĆ PANELU:
 PANEL_WIDTH=250
 # PEŁNY EKRAN:

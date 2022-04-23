@@ -225,6 +225,7 @@ printList()
 def add_item():
 	id=input_id.get()
 	n=input_amount.get()
+	n = n.replace(',','.')
 	input_id.delete(0, END)
 	input_amount.delete(0, END)
 	err=False

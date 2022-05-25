@@ -53,17 +53,21 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../addnewitem.cpp \
+		../infodialog.cpp \
 		../items.cpp \
 		../main.cpp \
 		../root.cpp qrc_resources.cpp \
 		moc_addnewitem.cpp \
+		moc_infodialog.cpp \
 		moc_root.cpp
 OBJECTS       = addnewitem.o \
+		infodialog.o \
 		items.o \
 		main.o \
 		root.o \
 		qrc_resources.o \
 		moc_addnewitem.o \
+		moc_infodialog.o \
 		moc_root.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -148,8 +152,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../fppShoplist.pro ../addnewitem.h \
+		../infodialog.h \
 		../items.h \
 		../root.h ../addnewitem.cpp \
+		../infodialog.cpp \
 		../items.cpp \
 		../main.cpp \
 		../root.cpp
@@ -161,7 +167,7 @@ TARGET        = fppShoplist
 first: all
 ####### Build rules
 
-fppShoplist: ui_addnewitem.h ui_root.h $(OBJECTS)  
+fppShoplist: ui_addnewitem.h ui_infodialog.h ui_root.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../fppShoplist.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -349,9 +355,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../addnewitem.h ../items.h ../root.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../addnewitem.cpp ../items.cpp ../main.cpp ../root.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../addnewitem.ui ../root.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../addnewitem.h ../infodialog.h ../items.h ../root.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../addnewitem.cpp ../infodialog.cpp ../items.cpp ../main.cpp ../root.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../addnewitem.ui ../infodialog.ui ../root.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -381,6 +387,8 @@ compiler_rcc_clean:
 qrc_resources.cpp: ../resources.qrc \
 		/usr/lib/qt5/bin/rcc \
 		../resources/icons/x-circle.svg \
+		../resources/icons/download.svg \
+		../resources/icons/cart-check.svg \
 		../resources/icons/info-circle.svg \
 		../resources/icons/x-square.svg \
 		../resources/icons/arrow-clockwise.svg \
@@ -389,6 +397,7 @@ qrc_resources.cpp: ../resources.qrc \
 		../resources/icons/trash.svg \
 		../resources/icons/keyboard.svg \
 		../resources/icons/search.svg \
+		../resources/icons/arrow-up-square.svg \
 		../resources/icons/cloud-arrow-up.svg \
 		../resources/icons/file-earmark-arrow-down.svg \
 		../resources/icons/check-circle.svg
@@ -400,15 +409,20 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_addnewitem.cpp moc_root.cpp
+compiler_moc_header_make_all: moc_addnewitem.cpp moc_infodialog.cpp moc_root.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_addnewitem.cpp moc_root.cpp
+	-$(DEL_FILE) moc_addnewitem.cpp moc_infodialog.cpp moc_root.cpp
 moc_addnewitem.cpp: ../addnewitem.h \
 		../root.h \
 		../items.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/m_zsuetam/Documents/prog/cpp/fppShoplist/build_fppShoplist/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/m_zsuetam/Documents/prog/cpp/fppShoplist -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../addnewitem.h -o moc_addnewitem.cpp
+
+moc_infodialog.cpp: ../infodialog.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/m_zsuetam/Documents/prog/cpp/fppShoplist/build_fppShoplist/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/m_zsuetam/Documents/prog/cpp/fppShoplist -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../infodialog.h -o moc_infodialog.cpp
 
 moc_root.cpp: ../root.h \
 		../items.h \
@@ -420,12 +434,16 @@ compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_addnewitem.h ui_root.h
+compiler_uic_make_all: ui_addnewitem.h ui_infodialog.h ui_root.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_addnewitem.h ui_root.h
+	-$(DEL_FILE) ui_addnewitem.h ui_infodialog.h ui_root.h
 ui_addnewitem.h: ../addnewitem.ui \
 		/usr/lib/qt5/bin/uic
 	/usr/lib/qt5/bin/uic ../addnewitem.ui -o ui_addnewitem.h
+
+ui_infodialog.h: ../infodialog.ui \
+		/usr/lib/qt5/bin/uic
+	/usr/lib/qt5/bin/uic ../infodialog.ui -o ui_infodialog.h
 
 ui_root.h: ../root.ui \
 		/usr/lib/qt5/bin/uic
@@ -447,6 +465,10 @@ addnewitem.o: ../addnewitem.cpp ../addnewitem.h \
 		ui_addnewitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o addnewitem.o ../addnewitem.cpp
 
+infodialog.o: ../infodialog.cpp ../infodialog.h \
+		ui_infodialog.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o infodialog.o ../infodialog.cpp
+
 items.o: ../items.cpp ../items.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o items.o ../items.cpp
 
@@ -465,6 +487,9 @@ qrc_resources.o: qrc_resources.cpp
 
 moc_addnewitem.o: moc_addnewitem.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_addnewitem.o moc_addnewitem.cpp
+
+moc_infodialog.o: moc_infodialog.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_infodialog.o moc_infodialog.cpp
 
 moc_root.o: moc_root.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_root.o moc_root.cpp

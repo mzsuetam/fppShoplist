@@ -10,17 +10,20 @@ CONFIG += c++11
 
 SOURCES += \
     addnewitem.cpp \
+    infodialog.cpp \
     items.cpp \
     main.cpp \
     root.cpp
 
 HEADERS += \
     addnewitem.h \
+    infodialog.h \
     items.h \
     root.h
 
 FORMS += \
     addnewitem.ui \
+    infodialog.ui \
     root.ui
 
 # Default rules for deployment.

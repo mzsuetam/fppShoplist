@@ -72,7 +72,7 @@ public:
         actionTransfer = new QAction(root);
         actionTransfer->setObjectName(QString::fromUtf8("actionTransfer"));
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/icons/resources/icons/cloud-arrow-up.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon3.addFile(QString::fromUtf8(":/icons/resources/icons/arrow-up-square.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionTransfer->setIcon(icon3);
         actionRestore = new QAction(root);
         actionRestore->setObjectName(QString::fromUtf8("actionRestore"));
@@ -112,6 +112,9 @@ public:
         actionSearch_Item->setIcon(icon9);
         actionBackup = new QAction(root);
         actionBackup->setObjectName(QString::fromUtf8("actionBackup"));
+        QIcon icon10;
+        icon10.addFile(QString::fromUtf8(":/icons/resources/icons/download.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        actionBackup->setIcon(icon10);
         centralwidget = new QWidget(root);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

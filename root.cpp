@@ -2,6 +2,7 @@
 #include "ui_root.h"
 
 #include "addnewitem.h"
+#include "infodialog.h"
 
 #include <QDebug>
 #include <QFile>
@@ -16,6 +17,7 @@ root::root(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("FppShoplist 2.0");
+    setWindowIcon(QIcon(":/icons/resources/icons/cart-check.svg"));
 
     // tableViewItemsInCart
     model_items_in_cart = new QStringListModel(this);
@@ -180,11 +182,11 @@ void root::addItemToList( double _amount, QString _id, QString _name){
 
 void root::on_actionInsert_triggered()
 {
-    addNewItem info_about_stirling;
-    info_about_stirling.setModal(true);
-    info_about_stirling.init(this, &all_items);
+    addNewItem new_window;
+    new_window.setModal(true);
+    new_window.init(this, &all_items);
     setEnabled(false);
-    info_about_stirling.exec();
+    new_window.exec();
 }
 
 
@@ -214,11 +216,11 @@ void root::on_actionEdit_triggered()
     QString _id = items_in_chart[selected_item].id;
     double _amount = items_in_chart[selected_item].amount;
 
-    addNewItem info_about_stirling;
-    info_about_stirling.setModal(true);
-    info_about_stirling.init(this, &all_items, _id, _amount);
+    addNewItem new_window;
+    new_window.setModal(true);
+    new_window.init(this, &all_items, _id, _amount);
     setEnabled(false);
-    info_about_stirling.exec();
+    new_window.exec();
 
     if ( _n != items_in_chart.size() ){
         on_actionDelete_triggered();
@@ -230,11 +232,11 @@ void root::on_actionEdit_triggered()
 
 void root::on_actionSearch_Item_triggered()
 {
-    addNewItem info_about_stirling;
-    info_about_stirling.setModal(true);
-    info_about_stirling.init(this, &all_items, true); // true - search mode
+    addNewItem new_window;
+    new_window.setModal(true);
+    new_window.init(this, &all_items, true); // true - search mode
     setEnabled(false);
-    info_about_stirling.exec();
+    new_window.exec();
 }
 
 bool root::backupItemList(){
@@ -252,6 +254,8 @@ bool root::backupItemList(){
 void root::on_actionTransfer_triggered()
 {
     backupItemList();
+
+    // make transfer
 }
 
 
@@ -265,4 +269,28 @@ void root::on_actionRestore_triggered()
     refreshList();
 }
 
-//git try
+void root::on_actionBackup_triggered()
+{
+    backupItemList();
+}
+
+
+void root::on_actionAbout_triggered()
+{
+    InfoDialog new_window;
+    new_window.setModal(true);
+    new_window.init(this, "About");
+    setEnabled(false);
+    new_window.exec();
+}
+
+
+void root::on_actionShortcuts_triggered()
+{
+    InfoDialog new_window;
+    new_window.setModal(true);
+    new_window.init(this, "Shortcuts");
+    setEnabled(false);
+    new_window.exec();
+}
+

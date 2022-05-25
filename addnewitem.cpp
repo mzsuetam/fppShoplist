@@ -11,7 +11,6 @@ addNewItem::addNewItem(QWidget *parent) :
     ui(new Ui::addNewItem)
 {
     ui->setupUi(this);
-    setWindowTitle("Add item to cart");
 
     // listViewItems
     model_searched_items = new QStringListModel(this);
@@ -26,8 +25,12 @@ addNewItem::addNewItem(QWidget *parent) :
 }
 
 void addNewItem::init(root* _root, QList<Item>* _all_items){
+    // ADD INIT
     root_ptr = _root;
     all_items = _all_items;
+
+    setWindowTitle("Edit item in cart");
+    setWindowIcon(QIcon(":/icons/resources/icons/plus-square.svg"));
 
     // starting with all items as searched
     searched_items = *all_items;
@@ -35,9 +38,15 @@ void addNewItem::init(root* _root, QList<Item>* _all_items){
 }
 
 void addNewItem::init(root* _root, QList<Item>* _all_items, QString id, double amount){
+    // EDIT INIT
+
     root_ptr = _root;
     all_items = _all_items;
 
+    setWindowTitle("Edit item in cart");
+    setWindowIcon(QIcon(":/icons/resources/icons/pencil-square.svg"));
+
+    // configuring window for edit purposes
     ui->inputID->setPlainText(id);
     ui->inputAmount->setPlainText(QString::number(amount));
 
@@ -47,15 +56,20 @@ void addNewItem::init(root* _root, QList<Item>* _all_items, QString id, double a
 }
 
 void addNewItem::init(root* _root, QList<Item>* _all_items, bool search){
+    // SEARCH INIT
+
     root_ptr = _root;
     all_items = _all_items;
+    searchmode = search;
 
     // starting with all items as searched
     searched_items = *all_items;
 
 
     setWindowTitle("Search Items");
+    setWindowIcon(QIcon(":/icons/resources/icons/search.svg"));
 
+    // configuring window for search purposes
     delete ui->inputAmount;
     delete ui->pushButtonOk;
 
@@ -98,7 +112,8 @@ void addNewItem::refreshList(){
     }
 
     // connecting pressing items in the list with function
-    connect( ui->listViewItems, SIGNAL(clicked(const QModelIndex &) ), this, SLOT( listItemClicked(const QModelIndex &) ) );
+    if ( !searchmode )
+        connect( ui->listViewItems, SIGNAL(clicked(const QModelIndex &) ), this, SLOT( listItemClicked(const QModelIndex &) ) );
 }
 
 

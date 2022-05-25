@@ -42,6 +42,8 @@ private:
 
     QStringListModel *model_searched_items;
 
+    bool searchmode = false;
+
 public:
     root* root_ptr;
     QList<Item> searched_items;

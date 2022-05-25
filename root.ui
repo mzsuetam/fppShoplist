@@ -179,7 +179,7 @@
   <action name="actionTransfer">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/icons/resources/icons/cloud-arrow-up.svg</normaloff>:/icons/resources/icons/cloud-arrow-up.svg</iconset>
+     <normaloff>:/icons/resources/icons/arrow-up-square.svg</normaloff>:/icons/resources/icons/arrow-up-square.svg</iconset>
    </property>
    <property name="text">
     <string>Transfer</string>

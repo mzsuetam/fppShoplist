@@ -33,6 +33,8 @@ public:
 
     bool backupItemList();
 
+    QString getVer(){return ver;}
+
     QList<Item> all_items;
 
 private slots:
@@ -54,8 +56,16 @@ private slots:
 
     void on_actionRestore_triggered();
 
+    void on_actionBackup_triggered();
+
+    void on_actionAbout_triggered();
+
+    void on_actionShortcuts_triggered();
+
 private:
     Ui::root *ui;
+    QString ver="2.0.0-a.1";
+
     QStringListModel *model_items_in_cart;
     QList<ItemInCart> items_in_chart;
     int selected_item;

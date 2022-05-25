@@ -14,5 +14,6 @@
         <file>resources/icons/search.svg</file>
         <file>resources/icons/arrow-up-square.svg</file>
         <file>resources/icons/download.svg</file>
+        <file>resources/icons/cart-check.svg</file>
     </qresource>
 </RCC>

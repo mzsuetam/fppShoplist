@@ -1,6 +1,0 @@
-to make a shortcut to fppshoplist (dealer) on your desktop:
-	1) copy FPP_Shoplist.desktop to your desktop
-	2) open it in text editor 
-	3) change Icon and X-Icon-Path to <absolute path to fppshoplist folder>/resources/icon.png
-	4) change Exec to "<absolute path to fppshoplist folder>/desktop/fppshoplist_run.sh
-	5) open fppshoplist_run.sh and change absolute path after python3 to <absolute path to fppshoplist folder>/fppshoplist_dealer.py

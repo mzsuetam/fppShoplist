@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/icons/pencil-square.svg</file>
+        <file>resources/icons/plus-square.svg</file>
+        <file>resources/icons/x-square.svg</file>
+        <file>resources/icons/cloud-arrow-up.svg</file>
+        <file>resources/icons/file-earmark-arrow-down.svg</file>
+        <file>resources/icons/arrow-clockwise.svg</file>
+        <file>resources/icons/trash.svg</file>
+        <file>resources/icons/info-circle.svg</file>
+        <file>resources/icons/keyboard.svg</file>
+        <file>resources/icons/check-circle.svg</file>
+        <file>resources/icons/x-circle.svg</file>
+        <file>resources/icons/search.svg</file>
+    </qresource>
+</RCC>

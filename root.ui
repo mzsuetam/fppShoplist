@@ -90,6 +90,7 @@
     </property>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
+    <addaction name="actionBackup"/>
     <addaction name="actionRestore"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -199,9 +200,7 @@
     <string>Restore</string>
    </property>
    <property name="font">
-    <font>
-     <family>Ubuntu</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -216,9 +215,7 @@
     <string>Import data from file</string>
    </property>
    <property name="font">
-    <font>
-     <family>Ubuntu</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionClear">
@@ -230,9 +227,7 @@
     <string>Clear</string>
    </property>
    <property name="font">
-    <font>
-     <family>Ubuntu</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+Del</string>
@@ -247,9 +242,7 @@
     <string>Shortcuts</string>
    </property>
    <property name="font">
-    <font>
-     <family>Ubuntu</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionAbout">
@@ -274,6 +267,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionBackup">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/resources/icons/download.svg</normaloff>:/icons/resources/icons/download.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Backup</string>
    </property>
   </action>
  </widget>

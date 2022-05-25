@@ -12,5 +12,7 @@
         <file>resources/icons/check-circle.svg</file>
         <file>resources/icons/x-circle.svg</file>
         <file>resources/icons/search.svg</file>
+        <file>resources/icons/arrow-up-square.svg</file>
+        <file>resources/icons/download.svg</file>
     </qresource>
 </RCC>

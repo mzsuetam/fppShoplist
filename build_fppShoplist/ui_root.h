@@ -35,6 +35,7 @@ public:
     QAction *actionShortcuts;
     QAction *actionAbout;
     QAction *actionSearch_Item;
+    QAction *actionBackup;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QListView *listViewItemsInCart;
@@ -78,37 +79,39 @@ public:
         QIcon icon4;
         icon4.addFile(QString::fromUtf8(":/icons/resources/icons/arrow-clockwise.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionRestore->setIcon(icon4);
-        actionRestore->setFont(font);
+        QFont font1;
+        actionRestore->setFont(font1);
         actionImport_data_from_file = new QAction(root);
         actionImport_data_from_file->setObjectName(QString::fromUtf8("actionImport_data_from_file"));
         QIcon icon5;
         icon5.addFile(QString::fromUtf8(":/icons/resources/icons/file-earmark-arrow-down.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionImport_data_from_file->setIcon(icon5);
-        actionImport_data_from_file->setFont(font);
+        actionImport_data_from_file->setFont(font1);
         actionClear = new QAction(root);
         actionClear->setObjectName(QString::fromUtf8("actionClear"));
         QIcon icon6;
         icon6.addFile(QString::fromUtf8(":/icons/resources/icons/trash.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionClear->setIcon(icon6);
-        actionClear->setFont(font);
+        actionClear->setFont(font1);
         actionShortcuts = new QAction(root);
         actionShortcuts->setObjectName(QString::fromUtf8("actionShortcuts"));
         QIcon icon7;
         icon7.addFile(QString::fromUtf8(":/icons/resources/icons/keyboard.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionShortcuts->setIcon(icon7);
-        actionShortcuts->setFont(font);
+        actionShortcuts->setFont(font1);
         actionAbout = new QAction(root);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
         QIcon icon8;
         icon8.addFile(QString::fromUtf8(":/icons/resources/icons/info-circle.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionAbout->setIcon(icon8);
-        QFont font1;
         actionAbout->setFont(font1);
         actionSearch_Item = new QAction(root);
         actionSearch_Item->setObjectName(QString::fromUtf8("actionSearch_Item"));
         QIcon icon9;
         icon9.addFile(QString::fromUtf8(":/icons/resources/icons/search.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionSearch_Item->setIcon(icon9);
+        actionBackup = new QAction(root);
+        actionBackup->setObjectName(QString::fromUtf8("actionBackup"));
         centralwidget = new QWidget(root);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -163,6 +166,7 @@ public:
         menuFile->addAction(actionImport_data_from_file);
         menuList->addAction(actionClear);
         menuList->addSeparator();
+        menuList->addAction(actionBackup);
         menuList->addAction(actionRestore);
         menuHelp->addAction(actionShortcuts);
         menuHelp->addAction(actionAbout);
@@ -225,6 +229,7 @@ public:
 #if QT_CONFIG(shortcut)
         actionSearch_Item->setShortcut(QCoreApplication::translate("root", "Ctrl+S", nullptr));
 #endif // QT_CONFIG(shortcut)
+        actionBackup->setText(QCoreApplication::translate("root", "Backup", nullptr));
         menuFile->setTitle(QCoreApplication::translate("root", "File", nullptr));
         menuList->setTitle(QCoreApplication::translate("root", "List", nullptr));
         menuHelp->setTitle(QCoreApplication::translate("root", "Help", nullptr));

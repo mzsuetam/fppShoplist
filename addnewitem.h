@@ -44,6 +44,8 @@ private:
 
     bool searchmode = false;
 
+    int AMOUNT_MAX = 100000;
+
 public:
     root* root_ptr;
     QList<Item> searched_items;

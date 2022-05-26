@@ -30,10 +30,6 @@ root::root(QWidget *parent)
         dir.mkpath(".");
     importItemList(QDir::currentPath() + "/resources/items.list", all_items);
 
-    // tmp for MyTcpSocket test
-    MyTcpSocket *socket = new MyTcpSocket;
-    socket->doConnect();
-    socket->write("Test");
 
 }
 
@@ -105,11 +101,13 @@ bool root::importItemList(QString path, QList<Item>& list){
        {
           QString line = in.readLine();
           QStringList data = line.split( "," );
-          QString cat = data[0].split( '"' )[1];
-          QString id = data[1].split( '"' )[1];
-          QString name = data[2].split( '"' )[1];
+          if ( data.size() >= 3 ){
+              QString cat = data[0].split( '"' )[1];
+              QString id = data[1].split( '"' )[1];
+              QString name = data[2].split( '"' )[1];
 
-          list.append(Item(id,name,cat));
+              list.append(Item(id,name,cat));
+          }
        }
        inputFile.close();
     }
@@ -130,11 +128,13 @@ bool root::importItemList(QString path, QList<ItemInCart>& list){
        {
           QString line = in.readLine();
           QStringList data = line.split( "," );
-          double amo = data[0].split( '"' )[1].toDouble(); // assuming that data in backup is OK
-          QString id = data[1].split( '"' )[1];
-          QString name = data[2].split( '"' )[1];
+          if ( data.size() >= 3 ){
+              double amo = data[0].split( '"' )[1].toDouble(); // assuming that data in backup is OK
+              QString id = data[1].split( '"' )[1];
+              QString name = data[2].split( '"' )[1];
 
-          list.append(ItemInCart(amo,id,name));
+              list.append(ItemInCart(amo,id,name));
+          }
        }
        inputFile.close();
     }
@@ -261,6 +261,48 @@ void root::on_actionTransfer_triggered()
     backupItemList();
 
     // make transfer
+
+    MyTcpSocket *socket = new MyTcpSocket;
+
+    bool ok;
+    if ( !socket->doConnect()){
+        QMessageBox::critical(this, "Error!", "Unable to connect to Host computer!");
+        return;
+    }
+    QString server_ready = socket->read(ok);
+    qDebug() << server_ready;
+
+    if ( ok && server_ready == "0" ){ // 0 - server ready
+        socket->write("n:"+QString::number(items_in_chart.size())); // ile będzie produktów?
+        for (int i=0; i<items_in_chart.size(); i++){ // przesłanie wszystkich produktów
+            socket->write(items_in_chart[i].id + ":" + QString::number(items_in_chart[i].amount)); // w formacie symbol:ilość
+        }
+        socket->write("e:"); // koniec
+        QString server_transfer_status = socket->read(ok);
+        if ( ok && server_transfer_status == "1" ){ // 1 - error, transfer corrupted
+            QMessageBox::critical(this, "Error!", "Data transfer corrupted!");
+            return;
+        }
+        else if ( ok ){
+            QMessageBox::information(this, "Success!", "Data imported successfully!");
+        }
+        else{ // ok == false
+            QMessageBox::critical(this, "Error!", "Host computer not responding!");
+            return;
+        }
+    }
+    else if ( ok && server_ready == "1" ){
+        QMessageBox::critical(this, "Error!", "Host computer is not expecting transfer!\nTry CTRL+Ins");
+        return;
+    }
+    else if ( ok && server_ready == "2" ){
+        QMessageBox::critical(this, "Error!", "Host computer busy!");
+        return;
+    }
+    else { // ok == false
+        QMessageBox::critical(this, "Error!", "Host computer not responding!");
+        return;
+    }
 }
 
 

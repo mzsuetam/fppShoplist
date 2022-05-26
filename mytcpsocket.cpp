@@ -1,10 +1,17 @@
 #include "mytcpsocket.h"
 
 #include <iostream>
+#include <QEventLoop>
+#include <QTimer>
 
 MyTcpSocket::MyTcpSocket(QObject *parent) :
     QObject(parent)
 {
+}
+
+MyTcpSocket::~MyTcpSocket(){
+    write(DISCONNECT_MSG);
+    if ( VOICE ) qDebug() << "socket killed";
 }
 
 bool MyTcpSocket::doConnect()
@@ -24,7 +31,7 @@ bool MyTcpSocket::doConnect()
     // we need to wait...
     if(!socket->waitForConnected(5000))
     {
-        if ( VOICE ) qDebug() << "Error: " << socket->errorString();
+        if ( VOICE ) qDebug() << "Socket Error: " << socket->errorString();
         return false;
     }
 
@@ -49,22 +56,29 @@ void MyTcpSocket::bytesWritten(qint64 bytes)
     if ( VOICE ) qDebug() << bytes << " bytes written...";
 }
 
-void MyTcpSocket::readyRead()
-{
-    if ( VOICE ) qDebug() << "reading...";
-    if ( VOICE ) qDebug() << socket->readAll();
-}
-
-char* MyTcpSocket::toChar(QString _data){
-    const QByteArray stringData = _data.toUtf8();
-    char* data = new char[stringData.size()];
-    std::copy(stringData.constBegin(),stringData.constBegin()+stringData.size(),data);
-    return data;
-}
-
 void MyTcpSocket::write(QString _data){
     QString _n = QString::number(_data.size());
     _n += QString(" ").repeated(HEADER-_n.size());
     socket->write(_n.toUtf8());
     socket->write(_data.toUtf8());
+}
+
+void MyTcpSocket::readyRead()
+{
+    if ( VOICE ) qDebug() << "incoming data...";
+}
+
+QString MyTcpSocket::read(bool &recieved){
+    QEventLoop loop;
+    auto timer = new QTimer(this);
+    timer->setSingleShot(true);
+    connect( timer, &QTimer::timeout, &loop, &QEventLoop::quit );
+    connect( socket, SIGNAL(readyRead()), &loop, SLOT(quit()) );
+    timer->start(2000);
+    loop.exec();
+    if ( VOICE ) qDebug() << "Reading...";
+    QString buff = socket->readAll();
+    recieved = true;
+    if ( buff == "" ) recieved = false;
+    return buff;
 }

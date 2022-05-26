@@ -136,6 +136,11 @@ void addNewItem::on_pushButtonOk_pressed()
         ui->inputAmount->setFocus();
         return;
     }
+    if ( ( amount <= 0) || ( amount > AMOUNT_MAX) ){ // amount is not a number
+        QMessageBox::critical(this, "Error!", "Amount must be bigger than 0 and smaller than " + QString::number(AMOUNT_MAX)) + "!";
+        ui->inputAmount->setFocus();
+        return;
+    }
 
     bool id_ok = false;
     for ( int i=0; i<all_items->size();i++){

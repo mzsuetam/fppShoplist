@@ -15,12 +15,11 @@ class MyTcpSocket : public QObject
 public:
     explicit MyTcpSocket(QObject *parent = 0);
 
+    ~MyTcpSocket();
+
     bool doConnect();
 
-    //void write(QString message);
-
-private:
-    char* toChar(QString _data);
+    QString read(bool& recieved);
 
 signals:
 
@@ -38,10 +37,10 @@ public slots:
 
 private:
     QTcpSocket *socket;
-    bool VOICE = true; // false for console-silent mode
+    bool VOICE = false; // false for console-silent mode
 
     QString SERVER_IP = "192.168.0.178";
-    qint16 PORT = 5051;
+    qint16 PORT = 5050;
     qint8 HEADER = 64;
 
     QString DISCONNECT_MSG = "!DISCONNECT";

@@ -1,4 +1,5 @@
 QT       += core gui
+QT	 += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,12 +14,14 @@ SOURCES += \
     infodialog.cpp \
     items.cpp \
     main.cpp \
+    mytcpsocket.cpp \
     root.cpp
 
 HEADERS += \
     addnewitem.h \
     infodialog.h \
     items.h \
+    mytcpsocket.h \
     root.h
 
 FORMS += \

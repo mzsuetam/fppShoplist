@@ -3,6 +3,7 @@
 
 #include "addnewitem.h"
 #include "infodialog.h"
+#include "mytcpsocket.h"
 
 #include <QDebug>
 #include <QFile>
@@ -29,6 +30,10 @@ root::root(QWidget *parent)
         dir.mkpath(".");
     importItemList(QDir::currentPath() + "/resources/items.list", all_items);
 
+    // tmp for MyTcpSocket test
+    MyTcpSocket *socket = new MyTcpSocket;
+    socket->doConnect();
+    socket->write("Test");
 
 }
 

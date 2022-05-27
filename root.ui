@@ -83,6 +83,7 @@
      <string>File</string>
     </property>
     <addaction name="actionImport_data_from_file"/>
+    <addaction name="actionSearch_for_Host"/>
    </widget>
    <widget class="QMenu" name="menuList">
     <property name="title">
@@ -276,6 +277,15 @@
    </property>
    <property name="text">
     <string>Backup</string>
+   </property>
+  </action>
+  <action name="actionSearch_for_Host">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/resources/icons/search.svg</normaloff>:/icons/resources/icons/search.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Search for Host</string>
    </property>
   </action>
  </widget>

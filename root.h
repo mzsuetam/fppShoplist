@@ -62,6 +62,8 @@ private slots:
 
     void on_actionShortcuts_triggered();
 
+    void on_actionSearch_for_Host_triggered();
+
 private:
     Ui::root *ui;
     QString ver="2.0.0-a.1";
@@ -69,5 +71,7 @@ private:
     QStringListModel *model_items_in_cart;
     QList<ItemInCart> items_in_chart;
     int selected_item;
+
+    QString server_ip = "";
 };
 #endif // ROOT_H

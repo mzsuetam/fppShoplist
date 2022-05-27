@@ -101,6 +101,27 @@ bool root::importItemList(QString path, QList<Item>& list){
        {
           QString line = in.readLine();
           QStringList data = line.split( "," );
+           // @TODO:
+           // make split(',') pass , in quoting
+          data.clear();
+          int itr=0, itr_last=0;
+          bool data_in_quotation = false;
+          while ( line.indexOf('"',itr_last) ){
+              itr = line.indexOf('"',itr_last);
+              if ( line[itr] == '"' && !data_in_quotation ){
+                  data_in_quotation = true;
+                  itr_last=itr;
+              }
+              else if ( line[itr] == '"' && data_in_quotation ){
+                  data_in_quotation = false;
+              }
+              if ( !data_in_quotation && line[itr] == ',' ){
+                  qDebug() << line.mid(line.size()-itr_last, itr-itr_last);
+                  data.push_back( line.mid(line.size()-itr_last, itr-itr_last) );
+              }
+          }
+          qDebug() << "done" << data;
+          //////////////////
           if ( data.size() >= 3 ){
               QString cat = data[0].split( '"' )[1];
               QString id = data[1].split( '"' )[1];
@@ -263,6 +284,7 @@ void root::on_actionTransfer_triggered()
     // make transfer
 
     MyTcpSocket *socket = new MyTcpSocket;
+    socket->setServerIp(server_ip);
 
     bool ok;
     if ( !socket->doConnect()){
@@ -339,5 +361,15 @@ void root::on_actionShortcuts_triggered()
     new_window.init(this, "Shortcuts");
     setEnabled(false);
     new_window.exec();
+}
+
+
+void root::on_actionSearch_for_Host_triggered()
+{
+    MyTcpSocket *socket = new MyTcpSocket;
+    if ( socket->searchLocal() ){
+        server_ip = socket->getServerIp();
+        // save it to settings
+    }
 }
 

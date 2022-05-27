@@ -19,8 +19,12 @@ struct Item{
   QString id;
   QString name;
   QString category;
+  QString unit1;
+  QString unit2;
+  QString price;
   Item(QString _id, QString _name);
   Item(QString _id, QString _name, QString _category);
+  Item(QString _id, QString _name, QString _category, QString _unit1, QString  _unit2, QString _price);
 
   bool search(QString input) const;
 

@@ -19,6 +19,8 @@ public:
 
     bool doConnect();
 
+    bool searchLocal();
+
     QString read(bool& recieved);
 
 signals:
@@ -35,11 +37,14 @@ public slots:
 
     void write(QString _data);
 
+    QString getServerIp();
+    void setServerIp(QString ip);
+
 private:
     QTcpSocket *socket;
     bool VOICE = false; // false for console-silent mode
 
-    QString SERVER_IP = "192.168.0.178";
+    QString SERVER_IP; // "192.168.0.178";
     qint16 PORT = 5050;
     qint8 HEADER = 64;
 

@@ -17,7 +17,7 @@ MyTcpSocket::~MyTcpSocket(){
     if ( VOICE ) qDebug() << "socket killed";
 }
 
-bool MyTcpSocket::doConnect()
+bool MyTcpSocket::doConnect(QString ip)
 {
     socket = new QTcpSocket(this);
 
@@ -29,7 +29,7 @@ bool MyTcpSocket::doConnect()
     if ( VOICE ) qDebug() << "connecting...";
 
     // this is not blocking call
-    socket->connectToHost(SERVER_IP, PORT);
+    socket->connectToHost(ip, PORT);
 
     // we need to wait...
     if(!socket->waitForConnected(5000))
@@ -41,19 +41,24 @@ bool MyTcpSocket::doConnect()
     return true;
 }
 
-bool MyTcpSocket::searchLocal(){
+QString MyTcpSocket::searchLocalForHost(){
     QString local_ip = "";
     const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
     for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
              local_ip = address.toString(); // found "xxx.xxx.x.xxx"
     }
-    if ( local_ip == "" ) return false;
+    // @TODO:
+    // should throw an exception here
+    if ( local_ip == "" ) return "";
     int ptr = local_ip.lastIndexOf('.');
     local_ip = local_ip.left(ptr+1); // trim last 3
     ///
     for (int i=0; i<255; i++){ // trying to connect to all local servers
-        { // this shit should be in threads https://www.youtube.com/watch?v=JaGqGhRW5Ks
+        {
+        // @TODO:
+        // this shit should be in threads
+        //  https://www.youtube.com/watch?v=JaGqGhRW5Ks
         qDebug() << "Trying to connect to " << local_ip+QString::number(i);
         socket->connectToHost(local_ip+QString::number(i), PORT);
         if(socket->waitForConnected(1000)) // check behaviour in threadsS
@@ -62,13 +67,12 @@ bool MyTcpSocket::searchLocal(){
             // should send server sth like !VERIFY_CONNECTION
             // then read for !CONNECTION_VERIFIED
             // and if that didnt happen pass
-            SERVER_IP = local_ip+QString::number(i);
-            return true;
+            return local_ip+QString::number(i);
         }
         }
     }
 
-    return false;
+    return "";
 }
 
 void MyTcpSocket::connected()
@@ -115,12 +119,3 @@ QString MyTcpSocket::read(bool &recieved){
     if ( buff == "" ) recieved = false;
     return buff;
 }
-
-QString MyTcpSocket::getServerIp(){
-    return SERVER_IP;
-}
-
-void MyTcpSocket::setServerIp(QString ip){
-    SERVER_IP = ip;
-}
-

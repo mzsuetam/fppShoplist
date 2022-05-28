@@ -317,10 +317,9 @@ void root::on_actionTransfer_triggered()
     // make transfer
 
     MyTcpSocket *socket = new MyTcpSocket;
-    socket->setServerIp(server_ip);
 
     bool ok;
-    if ( !socket->doConnect()){
+    if ( !socket->doConnect(server_ip)){
         QMessageBox::critical(this, "Error!", "Unable to connect to Host computer!");
         return;
     }
@@ -400,9 +399,8 @@ void root::on_actionShortcuts_triggered()
 void root::on_actionSearch_for_Host_triggered()
 {
     MyTcpSocket *socket = new MyTcpSocket;
-    if ( socket->searchLocal() ){
-        server_ip = socket->getServerIp();
-        // save it to settings
-    }
+    server_ip = socket->searchLocalForHost();
+    // @TODO:
+    // success/failure message
 }
 

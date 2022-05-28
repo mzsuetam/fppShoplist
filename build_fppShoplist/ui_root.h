@@ -36,6 +36,7 @@ public:
     QAction *actionAbout;
     QAction *actionSearch_Item;
     QAction *actionBackup;
+    QAction *actionSearch_for_Host;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QListView *listViewItemsInCart;
@@ -115,6 +116,9 @@ public:
         QIcon icon10;
         icon10.addFile(QString::fromUtf8(":/icons/resources/icons/download.svg"), QSize(), QIcon::Normal, QIcon::Off);
         actionBackup->setIcon(icon10);
+        actionSearch_for_Host = new QAction(root);
+        actionSearch_for_Host->setObjectName(QString::fromUtf8("actionSearch_for_Host"));
+        actionSearch_for_Host->setIcon(icon9);
         centralwidget = new QWidget(root);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -167,6 +171,7 @@ public:
         menubar->addAction(menuList->menuAction());
         menubar->addAction(menuHelp->menuAction());
         menuFile->addAction(actionImport_data_from_file);
+        menuFile->addAction(actionSearch_for_Host);
         menuList->addAction(actionClear);
         menuList->addSeparator();
         menuList->addAction(actionBackup);
@@ -233,6 +238,7 @@ public:
         actionSearch_Item->setShortcut(QCoreApplication::translate("root", "Ctrl+S", nullptr));
 #endif // QT_CONFIG(shortcut)
         actionBackup->setText(QCoreApplication::translate("root", "Backup", nullptr));
+        actionSearch_for_Host->setText(QCoreApplication::translate("root", "Search for Host", nullptr));
         menuFile->setTitle(QCoreApplication::translate("root", "File", nullptr));
         menuList->setTitle(QCoreApplication::translate("root", "List", nullptr));
         menuHelp->setTitle(QCoreApplication::translate("root", "Help", nullptr));

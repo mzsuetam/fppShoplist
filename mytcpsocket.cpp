@@ -58,6 +58,7 @@ bool MyTcpSocket::searchLocal(){
         socket->connectToHost(local_ip+QString::number(i), PORT);
         if(socket->waitForConnected(1000)) // check behaviour in threadsS
         {
+            // @TODO:
             // should send server sth like !VERIFY_CONNECTION
             // then read for !CONNECTION_VERIFIED
             // and if that didnt happen pass

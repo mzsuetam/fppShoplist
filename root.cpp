@@ -100,34 +100,44 @@ bool root::importItemList(QString path, QList<Item>& list){
        while (!in.atEnd())
        {
           QString line = in.readLine();
-          QStringList data = line.split( "," );
-           // @TODO:
-           // make split(',') pass , in quoting
-          data.clear();
-          int itr=0, itr_last=0;
-          bool data_in_quotation = false;
-          while ( line.indexOf('"',itr_last) ){
-              itr = line.indexOf('"',itr_last);
-              if ( line[itr] == '"' && !data_in_quotation ){
-                  data_in_quotation = true;
-                  itr_last=itr;
+          QStringList data_in_record = {};
+          bool quoting = false;
+          int l=0, p=0, c; // c - quote signs correction
+          while ( p < line.size() ){
+              if ( line[p] == ',' && !quoting ){
+                  if ( line[l] == '"') c=1;
+                  else c=0;
+                  data_in_record.append( line.mid(l+c,p-l-2*c) );
+                  l = ++p;
               }
-              else if ( line[itr] == '"' && data_in_quotation ){
-                  data_in_quotation = false;
+              if ( line[p] == '"' ){
+                  quoting = !quoting;
               }
-              if ( !data_in_quotation && line[itr] == ',' ){
-                  qDebug() << line.mid(line.size()-itr_last, itr-itr_last);
-                  data.push_back( line.mid(line.size()-itr_last, itr-itr_last) );
-              }
+              p++;
           }
-          qDebug() << "done" << data;
-          //////////////////
-          if ( data.size() >= 3 ){
-              QString cat = data[0].split( '"' )[1];
-              QString id = data[1].split( '"' )[1];
-              QString name = data[2].split( '"' )[1];
+          if ( line[l] == '"') c=1;
+          else c=0;
+          data_in_record.append( line.mid(l+c,p-l-2*c) );
 
-              list.append(Item(id,name,cat));
+          if ( data_in_record.size() >= 16 ){
+              QString cat = data_in_record[0];
+              QString id = data_in_record[1];
+              QString name = data_in_record[2];
+              QString unit1 = data_in_record[7];
+              QString unit2 = data_in_record[8];
+              QString price = data_in_record[15];
+
+              list.append( Item(id,name,cat,unit1,unit2,price) );
+          }
+          else if ( data_in_record.size() >= 6 ){
+              QString cat = data_in_record[0];
+              QString id = data_in_record[1];
+              QString name = data_in_record[2];
+              QString unit1 = data_in_record[3];
+              QString unit2 = data_in_record[4];
+              QString price = data_in_record[5];
+
+              list.append( Item(id,name,cat,unit1,unit2,price) );
           }
        }
        inputFile.close();
@@ -147,15 +157,36 @@ bool root::importItemList(QString path, QList<ItemInCart>& list){
        QTextStream in(&inputFile);
        while (!in.atEnd())
        {
-          QString line = in.readLine();
-          QStringList data = line.split( "," );
-          if ( data.size() >= 3 ){
-              double amo = data[0].split( '"' )[1].toDouble(); // assuming that data in backup is OK
-              QString id = data[1].split( '"' )[1];
-              QString name = data[2].split( '"' )[1];
+           QString line = in.readLine();
+           QStringList data_in_record = {};
+           bool quoting = false;
+           int l=0, p=0, c; // quote signs correction
+           while ( p < line.size() ){
+               if ( line[p] == ',' && !quoting ){
+                   if ( line[l] == '"') c=1;
+                   else c=0;
+                   data_in_record.append( line.mid(l+c,p-l-2*c) );
+                   l = ++p;
+               }
+               if ( line[p] == '"' ){
+                   quoting = !quoting;
+               }
+               p++;
+           }
+           if ( line[l] == '"') c=1;
+           else c=0;
+           data_in_record.append( line.mid(l+c,p-l-2*c) );
 
-              list.append(ItemInCart(amo,id,name));
-          }
+           if ( data_in_record.size() >= 6 ){
+               double amount = data_in_record[0].toDouble();
+               QString id = data_in_record[1];
+               QString name = data_in_record[2];
+               QString unit1 = data_in_record[3];
+               QString unit2 = data_in_record[4];
+               QString price = data_in_record[5];
+
+               list.append( ItemInCart(amount,id,name,unit1,unit2,price) );
+            }
        }
        inputFile.close();
     }
@@ -172,7 +203,8 @@ bool root::exportItemList(QString path, QList<Item>& list){
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
-           stream << '"' << list[i].category << "\",\"" << list[i].id << "\",\"" << list[i].name << '"' << Qt::endl;
+           stream << '"' << list[i].category << "\",\"" << list[i].id << "\",\"" << list[i].name << "\",\""
+                   << list[i].unit1 << "\",\"" << list[i].unit2 << "\",\"" << list[i].price << '"' << Qt::endl;
        }
        exportFile.close();
     }
@@ -187,7 +219,8 @@ bool root::exportItemList(QString path, QList<ItemInCart>& list){
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
-           stream << '"'<< list[i].amount << "\",\"" << list[i].id << "\",\"" << list[i].name << '"' << Qt::endl;
+           stream << '"' << list[i].amount << "\",\"" << list[i].id << "\",\"" << list[i].name << "\",\""
+                  << list[i].unit1 << "\",\"" << list[i].unit2 << "\",\"" << list[i].price << '"' << Qt::endl;
        }
        exportFile.close();
     }

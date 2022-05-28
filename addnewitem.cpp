@@ -96,6 +96,7 @@ void addNewItem::listItemClicked(const QModelIndex &index){
     Item itm = searched_items[id];
     ui->inputID->clear();
     ui->inputID->insertPlainText(itm.id);
+    ui->inputAmount->setFocus();
 }
 
 void addNewItem::refreshList(){

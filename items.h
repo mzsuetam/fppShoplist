@@ -10,7 +10,11 @@ struct ItemInCart{
   double amount;
   QString id;
   QString name;
+  QString unit1;
+  QString unit2;
+  QString price;
   ItemInCart( double _amount, QString _id, QString _name);
+  ItemInCart(double _amount, QString _id, QString _name, QString _unit1, QString  _unit2, QString _price);
 };
 
 //////////////////////////////////////////////////

@@ -95,7 +95,7 @@ void addNewItem::listItemClicked(const QModelIndex &index){
     //qDebug() << id;
     Item itm = searched_items[id];
     ui->inputID->clear();
-    ui->inputID->insertPlainText(itm.id);
+    ui->inputID->insertPlainText(itm.getId());
     ui->inputAmount->setFocus();
 }
 
@@ -107,14 +107,16 @@ void addNewItem::refreshList(){
         QString label = "[";
         model_searched_items->insertRow(model_searched_items->rowCount());
         QModelIndex index = model_searched_items->index(i);
-        label += searched_items[i].category.rightJustified(5,' ') + "] "
-                + searched_items[i].id.rightJustified(5,' ')+ " - " +  searched_items[i].name;
+        label += searched_items[i].getCategory().rightJustified(5,' ') + "] "
+                + searched_items[i].getId().rightJustified(5,' ')+ " - " +  searched_items[i].getName();
         model_searched_items->setData(index, label);
     }
 
     // connecting pressing items in the list with function
     if ( !searchmode )
         connect( ui->listViewItems, SIGNAL(clicked(const QModelIndex &) ), this, SLOT( listItemClicked(const QModelIndex &) ) );
+
+    // @TODO: add unit1, unit2 and price displaying
 }
 
 
@@ -138,16 +140,16 @@ void addNewItem::on_pushButtonOk_pressed()
         return;
     }
     if ( ( amount <= 0) || ( amount > AMOUNT_MAX) ){ // amount is not a number
-        QMessageBox::critical(this, "Error!", "Amount must be bigger than 0 and smaller than " + QString::number(AMOUNT_MAX)) + "!";
+        QMessageBox::critical(this, "Error!", "Amount must be bigger than 0 and smaller than " + QString::number(AMOUNT_MAX) + "!");
         ui->inputAmount->setFocus();
         return;
     }
 
     bool id_ok = false;
     for ( int i=0; i<all_items->size();i++){
-        if ( id == (*all_items)[i].id ){
+        if ( id == (*all_items)[i].getId() ){
             id_ok = true;
-            name = (*all_items)[i].name;
+            name = (*all_items)[i].getName();
             break;
         }
     }
@@ -170,7 +172,7 @@ void addNewItem::on_inputID_textChanged()
         searched_items.clear();
         for ( int i=0; i<all_items->size();i++){
             if ( (*all_items)[i].search(input) ){
-                searched_items.append(Item((*all_items)[i].id,(*all_items)[i].name,(*all_items)[i].category));
+                searched_items.append(Item((*all_items)[i].getId(),(*all_items)[i].getName(),(*all_items)[i].getCategory()));
             }
         }
     }

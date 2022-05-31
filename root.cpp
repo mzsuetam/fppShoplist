@@ -3,7 +3,7 @@
 
 #include "addnewitem.h"
 #include "infodialog.h"
-#include "mytcpsocket.h"
+#include "tcpsocket.h"
 
 #include <QDebug>
 #include <QFile>
@@ -30,7 +30,8 @@ root::root(QWidget *parent)
         dir.mkpath(".");
     importItemList(QDir::currentPath() + "/resources/items.list", all_items);
 
-
+    // importing settings:
+    loadSettings();
 }
 
 root::~root()
@@ -54,41 +55,24 @@ void root::refreshList(){
         model_items_in_cart->insertRow(model_items_in_cart->rowCount());
         QModelIndex index = model_items_in_cart->index(i);
         label += QString::number(i).rightJustified(3, ' ')
-            + QString::number(items_in_chart[i].amount).rightJustified(10, ' ')
-            + items_in_chart[i].id.rightJustified(10, ' ')
-            + "     " +  items_in_chart[i].name;
+            + ": " + QString::number(items_in_chart[i].getAmount()).rightJustified(5, ' ')
+            + " - " + items_in_chart[i].getId().rightJustified(10, ' ')
+            + " - " +  items_in_chart[i].getName();
         model_items_in_cart->setData(index, label);
+
+        // @TODO: add unit1, unit2 and price displaying
     }
 
     // connecting pressing items in the list with function
     connect( ui->listViewItemsInCart, SIGNAL(clicked(const QModelIndex &) ), this, SLOT( listItemClicked(const QModelIndex &) ) );
 }
 
+void root::addItemToList( double _amount, QString _id, QString _name){
+    // creating item
+    ItemInCart new_item(_amount,_id,_name);
+    items_in_chart.append(new_item);
 
-void root::on_actionImport_data_from_file_triggered()
-{
-    // cannot have data in cart
-    if ( items_in_chart.size() > 0 ){
-        QMessageBox::critical(this, "Error!", "List must be empty to import new data!");
-        return;
-    }
-
-    QString ipath = QFileDialog::getOpenFileName(this, tr("Open File"),"/path/to/file/",tr("FPP Backup files (*.CDN)"));
-    if ( ipath.length() == 0 ) return;
-
-    // computing file and getting data
-    bool imp = importItemList(ipath, all_items);
-
-    // saving data to default file
-    QDir dir("resources"); // if folder doesnt exist, create it
-    if (!dir.exists())
-        dir.mkpath(".");
-    QString epath = QDir::currentPath() + "/resources/items.list";
-    // cannot use resources because they are stored in exe in binary files in read-only for the exe
-    bool exp = exportItemList(epath, all_items);
-
-    if ( imp && exp )
-        QMessageBox::information(this, "Success!", "Data imported successfully!");
+    refreshList();
 }
 
 bool root::importItemList(QString path, QList<Item>& list){
@@ -197,14 +181,13 @@ bool root::importItemList(QString path, QList<ItemInCart>& list){
     return true;
 }
 
-
 bool root::exportItemList(QString path, QList<Item>& list){
     QFile exportFile(path);
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
-           stream << '"' << list[i].category << "\",\"" << list[i].id << "\",\"" << list[i].name << "\",\""
-                   << list[i].unit1 << "\",\"" << list[i].unit2 << "\",\"" << list[i].price << '"' << Qt::endl;
+           stream << '"' << list[i].getCategory() << "\",\"" << list[i].getId() << "\",\"" << list[i].getName() << "\",\""
+                   << list[i].getUnit1() << "\",\"" << list[i].getUnit2() << "\",\"" << list[i].getPrice() << '"' << Qt::endl;
        }
        exportFile.close();
     }
@@ -214,13 +197,14 @@ bool root::exportItemList(QString path, QList<Item>& list){
     }
     return true;
 }
+
 bool root::exportItemList(QString path, QList<ItemInCart>& list){
     QFile exportFile(path);
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
-           stream << '"' << list[i].amount << "\",\"" << list[i].id << "\",\"" << list[i].name << "\",\""
-                  << list[i].unit1 << "\",\"" << list[i].unit2 << "\",\"" << list[i].price << '"' << Qt::endl;
+           stream << '"' << list[i].getAmount() << "\",\"" << list[i].getId() << "\",\"" << list[i].getName() << "\",\""
+                  << list[i].getUnit1() << "\",\"" << list[i].getUnit2() << "\",\"" << list[i].getPrice() << '"' << Qt::endl;
        }
        exportFile.close();
     }
@@ -231,12 +215,78 @@ bool root::exportItemList(QString path, QList<ItemInCart>& list){
     return true;
 }
 
-void root::addItemToList( double _amount, QString _id, QString _name){
-    // creating item
-    ItemInCart new_item(_amount,_id,_name);
-    items_in_chart.append(new_item);
+bool root::backupItemList(){
+    QDir dir("resources"); // if folder doesnt exist, create it
+    if (!dir.exists())
+        dir.mkpath(".");
+    QString epath = QDir::currentPath() + "/resources/backup.list";
+    // cannot use resources because they are stored in exe in binary files in read-only for the exe
+    if ( exportItemList(epath, items_in_chart) ) return true;
+    return false;
+}
 
-    refreshList();
+void root::saveSettings(){
+    QDir dir("resources"); // if folder doesnt exist, create it
+    if (!dir.exists())
+        dir.mkpath(".");
+    QFile exportFile(QDir::currentPath() + "/resources/settings.cfg");
+    if ( exportFile.open(QIODevice::WriteOnly) ){
+       QTextStream stream(&exportFile);
+       // default_ip:
+       stream << "default_ip:" << server_ip << '\n';
+       exportFile.close();
+    }
+    else{
+        QMessageBox::critical(this, "Error!", "Error saving the default settings!");
+    }
+}
+
+void root::loadSettings(){
+    QFile inputFile(QDir::currentPath() + "/resources/settings.cfg");
+    if (inputFile.open(QIODevice::ReadOnly))
+    {
+       QTextStream in(&inputFile);
+       while (!in.atEnd())
+       {
+          QString line = in.readLine();
+          // default ip
+          if ( line.contains("default_ip:") && line.split(":")[0] != line )
+              server_ip = line.split(":")[1];
+          // other settings
+       }
+       inputFile.close();
+    }
+    else{
+        QMessageBox::critical(this, "Error!", "Error accessing default settings!");
+    }
+}
+
+// SLOTS  ////////////////////////////////////////////////////////////////
+
+void root::on_actionImport_data_from_file_triggered()
+{
+    // cannot have data in cart
+    if ( items_in_chart.size() > 0 ){
+        QMessageBox::critical(this, "Error!", "List must be empty to import new data!");
+        return;
+    }
+
+    QString ipath = QFileDialog::getOpenFileName(this, tr("Open File"),"/path/to/file/",tr("FPP Backup files (*.CDN)"));
+    if ( ipath.length() == 0 ) return;
+
+    // computing file and getting data
+    bool imp = importItemList(ipath, all_items);
+
+    // saving data to default file
+    QDir dir("resources"); // if folder doesnt exist, create it
+    if (!dir.exists())
+        dir.mkpath(".");
+    QString epath = QDir::currentPath() + "/resources/items.list";
+    // cannot use resources because they are stored in exe in binary files in read-only for the exe
+    bool exp = exportItemList(epath, all_items);
+
+    if ( imp && exp )
+        QMessageBox::information(this, "Success!", "Data imported successfully!");
 }
 
 void root::on_actionInsert_triggered()
@@ -248,13 +298,11 @@ void root::on_actionInsert_triggered()
     new_window.exec();
 }
 
-
 void root::on_actionClear_triggered()
 {
     model_items_in_cart->removeRows(0,model_items_in_cart->rowCount());
     items_in_chart.clear();
 }
-
 
 void root::on_actionDelete_triggered()
 {
@@ -266,14 +314,13 @@ void root::on_actionDelete_triggered()
     refreshList();
 }
 
-
 void root::on_actionEdit_triggered()
 {
     if ( selected_item < 0 || selected_item > items_in_chart.size() -1 ) return;
 
     int _n = items_in_chart.size();
-    QString _id = items_in_chart[selected_item].id;
-    double _amount = items_in_chart[selected_item].amount;
+    QString _id = items_in_chart[selected_item].getId();
+    double _amount = items_in_chart[selected_item].getAmount();
 
     addNewItem new_window;
     new_window.setModal(true);
@@ -288,7 +335,6 @@ void root::on_actionEdit_triggered()
     refreshList();
 }
 
-
 void root::on_actionSearch_Item_triggered()
 {
     addNewItem new_window;
@@ -298,67 +344,76 @@ void root::on_actionSearch_Item_triggered()
     new_window.exec();
 }
 
-bool root::backupItemList(){
-    QDir dir("resources"); // if folder doesnt exist, create it
-    if (!dir.exists())
-        dir.mkpath(".");
-    QString epath = QDir::currentPath() + "/resources/backup.list";
-    // cannot use resources because they are stored in exe in binary files in read-only for the exe
-    if ( exportItemList(epath, items_in_chart) ) return true;
-    return false;
-}
-
-
-
 void root::on_actionTransfer_triggered()
 {
     backupItemList();
 
-    // make transfer
-
-    MyTcpSocket *socket = new MyTcpSocket;
-
-    bool ok;
-    if ( !socket->doConnect(server_ip)){
-        QMessageBox::critical(this, "Error!", "Unable to connect to Host computer!");
+    if ( server_ip == "" ){
+        QMessageBox::critical(this, "Error!", "No host computer saved!");
         return;
     }
-    QString server_ready = socket->read(ok);
-    qDebug() << server_ready;
 
-    if ( ok && server_ready == "0" ){ // 0 - server ready
-        socket->write("n:"+QString::number(items_in_chart.size())); // ile będzie produktów?
-        for (int i=0; i<items_in_chart.size(); i++){ // przesłanie wszystkich produktów
-            socket->write(items_in_chart[i].id + ":" + QString::number(items_in_chart[i].amount)); // w formacie symbol:ilość
+    if ( items_in_chart.size() == 0 ){
+        QMessageBox::critical(this, "Error!", "List for transfer cannot be empty!");
+        return;
+    }
+
+    // TRANSFER SECTION:
+    TcpSocket *socket = new TcpSocket(server_ip);
+
+    bool ok;
+    if ( !socket->isConnected() ){ // if failed to aquire connection
+        QMessageBox::critical(this, "Error!", "Unable to connect to Host computer!");
+        delete socket;
+        return;
+    }
+    // if connection aquired:
+    socket->writeValidateMsg(); // ask for connection validation
+    bool recieved;
+    QString ans = socket->read( recieved ); // get validation ans
+    if ( recieved && ans=="Connection to FppShoplist host validated!" ){ // if conection validated
+        QString server_status = socket->read(ok); // get server status
+        if ( ok && server_status == "0" ){ // 0 - server ready
+            socket->writeDataMsg(); // inform server about data transfer
+            socket->write("n:"+QString::number(items_in_chart.size())); // how many products
+            for (int i=0; i<items_in_chart.size(); i++){ // sending all produckts
+                socket->write(items_in_chart[i].getId() + ":" + QString::number(items_in_chart[i].getAmount())); // in format id:amount
+            }
+            socket->write("e:"); // inform about the end
+            QString server_transfer_status = socket->read(ok); // get server response about the stattus
+            if ( ok && server_transfer_status == "1" ){ // 1 - error, transfer corrupted
+                QMessageBox::critical(this, "Error!", "Data transfer corrupted!");
+                return;
+            }
+            else if ( ok ){
+                QMessageBox::information(this, "Success!", "Data imported successfully!");
+            }
+            else{ // ok == false
+                QMessageBox::critical(this, "Error!", "Host computer not responding!");
+                return;
+            }
         }
-        socket->write("e:"); // koniec
-        QString server_transfer_status = socket->read(ok);
-        if ( ok && server_transfer_status == "1" ){ // 1 - error, transfer corrupted
-            QMessageBox::critical(this, "Error!", "Data transfer corrupted!");
+        else if ( ok && server_status == "1" ){
+            QMessageBox::critical(this, "Error!", "Host computer is not expecting transfer!\nTry CTRL+Ins");
+            socket->writeDisconnectMsg();
             return;
         }
-        else if ( ok ){
-            QMessageBox::information(this, "Success!", "Data imported successfully!");
+        else if ( ok && server_status == "2" ){
+            QMessageBox::critical(this, "Error!", "Host computer busy!");
+            socket->writeDisconnectMsg();
+            return;
         }
-        else{ // ok == false
+        else { // ok == false
             QMessageBox::critical(this, "Error!", "Host computer not responding!");
             return;
         }
     }
-    else if ( ok && server_ready == "1" ){
-        QMessageBox::critical(this, "Error!", "Host computer is not expecting transfer!\nTry CTRL+Ins");
+    else { // ( recieved && ans=="Connection to FppShoplist host validated!" ) == false
+        QMessageBox::critical(this, "Error!", "Connection error!");
         return;
     }
-    else if ( ok && server_ready == "2" ){
-        QMessageBox::critical(this, "Error!", "Host computer busy!");
-        return;
-    }
-    else { // ok == false
-        QMessageBox::critical(this, "Error!", "Host computer not responding!");
-        return;
-    }
+    delete socket;
 }
-
 
 void root::on_actionRestore_triggered()
 {
@@ -375,7 +430,6 @@ void root::on_actionBackup_triggered()
     backupItemList();
 }
 
-
 void root::on_actionAbout_triggered()
 {
     InfoDialog new_window;
@@ -384,7 +438,6 @@ void root::on_actionAbout_triggered()
     setEnabled(false);
     new_window.exec();
 }
-
 
 void root::on_actionShortcuts_triggered()
 {
@@ -395,12 +448,21 @@ void root::on_actionShortcuts_triggered()
     new_window.exec();
 }
 
-
 void root::on_actionSearch_for_Host_triggered()
 {
-    MyTcpSocket *socket = new MyTcpSocket;
-    server_ip = socket->searchLocalForHost();
-    // @TODO:
-    // success/failure message
+    QMessageBox::information(this, "Info!", "Searching for host computer\nwill start after closing this window!\nThis can take a while.");
+    setEnabled(false);
+    TcpSocket *socket = new TcpSocket();
+    QString found_ip = socket->searchLocalForHost();
+    if ( found_ip != "" ){
+        QMessageBox::information(this, "Success!", "Found host computer!");
+        server_ip = found_ip;
+        saveSettings();
+    }
+    else{
+        QMessageBox::critical(this, "Error!", "Unable to find host computer!");
+    }
+    setEnabled(true);
+    delete socket;
 }
 

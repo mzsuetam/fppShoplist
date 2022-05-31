@@ -33,6 +33,9 @@ public:
 
     bool backupItemList();
 
+    void saveSettings();
+    void loadSettings();
+
     QString getVer(){return ver;}
 
     QList<Item> all_items;
@@ -72,6 +75,6 @@ private:
     QList<ItemInCart> items_in_chart;
     int selected_item;
 
-    QString server_ip = "";
+    QString server_ip = ""; //"192.168.0.178";
 };
 #endif // ROOT_H

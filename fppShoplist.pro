@@ -14,15 +14,15 @@ SOURCES += \
     infodialog.cpp \
     items.cpp \
     main.cpp \
-    mytcpsocket.cpp \
-    root.cpp
+    root.cpp \
+    tcpsocket.cpp
 
 HEADERS += \
     addnewitem.h \
     infodialog.h \
     items.h \
-    mytcpsocket.h \
-    root.h
+    root.h \
+    tcpsocket.h
 
 FORMS += \
     addnewitem.ui \

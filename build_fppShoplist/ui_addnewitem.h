@@ -111,7 +111,8 @@ public:
         listViewItems->setObjectName(QString::fromUtf8("listViewItems"));
         listViewItems->setMinimumSize(QSize(400, 0));
         QFont font;
-        font.setFamily(QString::fromUtf8("Monospace"));
+        font.setFamily(QString::fromUtf8("FreeMono"));
+        font.setPointSize(16);
         listViewItems->setFont(font);
         listViewItems->setEditTriggers(QAbstractItemView::NoEditTriggers);
 

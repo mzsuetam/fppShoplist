@@ -128,6 +128,9 @@ public:
         centralwidget->setSizePolicy(sizePolicy);
         centralwidget->setMinimumSize(QSize(0, 0));
         centralwidget->setMaximumSize(QSize(16777215, 16777215));
+        QFont font2;
+        font2.setFamily(QString::fromUtf8("Monospace"));
+        centralwidget->setFont(font2);
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         listViewItemsInCart = new QListView(centralwidget);
@@ -138,11 +141,11 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(listViewItemsInCart->sizePolicy().hasHeightForWidth());
         listViewItemsInCart->setSizePolicy(sizePolicy1);
-        QFont font2;
-        font2.setFamily(QString::fromUtf8("Monospace"));
-        font2.setPointSize(13);
-        font2.setStyleStrategy(QFont::PreferDefault);
-        listViewItemsInCart->setFont(font2);
+        QFont font3;
+        font3.setFamily(QString::fromUtf8("FreeMono"));
+        font3.setPointSize(16);
+        font3.setStyleStrategy(QFont::PreferDefault);
+        listViewItemsInCart->setFont(font3);
         listViewItemsInCart->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
         horizontalLayout->addWidget(listViewItemsInCart);
@@ -160,10 +163,10 @@ public:
         root->setMenuBar(menubar);
         toolBar = new QToolBar(root);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
-        QFont font3;
-        font3.setFamily(QString::fromUtf8("Ubuntu"));
-        font3.setPointSize(11);
-        toolBar->setFont(font3);
+        QFont font4;
+        font4.setFamily(QString::fromUtf8("Ubuntu"));
+        font4.setPointSize(11);
+        toolBar->setFont(font4);
         toolBar->setMovable(true);
         root->addToolBar(Qt::TopToolBarArea, toolBar);
 
@@ -171,6 +174,7 @@ public:
         menubar->addAction(menuList->menuAction());
         menubar->addAction(menuHelp->menuAction());
         menuFile->addAction(actionImport_data_from_file);
+        menuFile->addSeparator();
         menuFile->addAction(actionSearch_for_Host);
         menuList->addAction(actionClear);
         menuList->addSeparator();

@@ -60,8 +60,8 @@ private:
     CONNECTION_MESSAGES
 
 public:
-    static const int CONNECTION_WAITING_TIME = 5000;
-    static const int READING_WAITING_TIME = 2000;
+    static const int CONNECTION_WAITING_TIME = 2000;
+    static const int READING_WAITING_TIME = 1500;
 };
 
 class SimpleTcpSocket : public QThread
@@ -85,8 +85,9 @@ public slots:
 
     void readyRead(){}
 
-private:
+public:
     QTcpSocket *socket;
+private:
     bool VOICE = false; // false for console-silent mode
 
 

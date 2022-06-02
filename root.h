@@ -23,7 +23,7 @@ public:
 
     void refreshList();
 
-    void addItemToList( double _amount, QString _id, QString _name);
+    void addItemToList(double _amount, QString _id, QString _name, QString _unit1, QString  _unit2, QString _price);
 
     bool importItemList(QString path, QList<Item>& list);
     bool importItemList(QString path, QList<ItemInCart>& list);
@@ -69,10 +69,10 @@ private slots:
 
 private:
     Ui::root *ui;
-    QString ver="2.0.0-a.1";
+    QString ver="2.0.1-b.1";
 
     QStringListModel *model_items_in_cart;
-    QList<ItemInCart> items_in_chart;
+    QList<ItemInCart> items_in_cart;
     int selected_item;
 
     QString server_ip = ""; //"192.168.0.178";

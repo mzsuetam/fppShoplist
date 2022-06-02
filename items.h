@@ -16,8 +16,8 @@ protected:
   QString price;
 public:
   Item(){}
-  Item(QString _id, QString _name);
-  Item(QString _id, QString _name, QString _category);
+  //Item(QString _id, QString _name);
+  //Item(QString _id, QString _name, QString _category);
   Item(QString _id, QString _name, QString _category, QString _unit1, QString  _unit2, QString _price);
   ~Item(){}
 
@@ -40,7 +40,7 @@ class ItemInCart : public Item{
 protected:
   double amount;
 public:
-  ItemInCart( double _amount, QString _id, QString _name);
+  //ItemInCart( double _amount, QString _id, QString _name);
   ItemInCart(double _amount, QString _id, QString _name, QString _unit1, QString  _unit2, QString _price);
   ~ItemInCart(){}
 

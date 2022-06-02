@@ -12,12 +12,14 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -38,7 +40,11 @@ public:
     QAction *actionBackup;
     QAction *actionSearch_for_Host;
     QWidget *centralwidget;
-    QHBoxLayout *horizontalLayout;
+    QVBoxLayout *verticalLayout;
+    QLabel *SummaryViewItemsInCart_amount;
+    QLabel *SummaryViewItemsInCart_value;
+    QFrame *line;
+    QLabel *HeaderViewItemsInCart;
     QListView *listViewItemsInCart;
     QMenuBar *menubar;
     QMenu *menuFile;
@@ -131,24 +137,72 @@ public:
         QFont font2;
         font2.setFamily(QString::fromUtf8("Monospace"));
         centralwidget->setFont(font2);
-        horizontalLayout = new QHBoxLayout(centralwidget);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        verticalLayout = new QVBoxLayout(centralwidget);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        SummaryViewItemsInCart_amount = new QLabel(centralwidget);
+        SummaryViewItemsInCart_amount->setObjectName(QString::fromUtf8("SummaryViewItemsInCart_amount"));
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(SummaryViewItemsInCart_amount->sizePolicy().hasHeightForWidth());
+        SummaryViewItemsInCart_amount->setSizePolicy(sizePolicy1);
+        QFont font3;
+        font3.setFamily(QString::fromUtf8("Monospace"));
+        font3.setPointSize(15);
+        SummaryViewItemsInCart_amount->setFont(font3);
+
+        verticalLayout->addWidget(SummaryViewItemsInCart_amount);
+
+        SummaryViewItemsInCart_value = new QLabel(centralwidget);
+        SummaryViewItemsInCart_value->setObjectName(QString::fromUtf8("SummaryViewItemsInCart_value"));
+        QFont font4;
+        font4.setFamily(QString::fromUtf8("Monospace"));
+        font4.setPointSize(15);
+        font4.setBold(true);
+        font4.setWeight(75);
+        SummaryViewItemsInCart_value->setFont(font4);
+        SummaryViewItemsInCart_value->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+
+        verticalLayout->addWidget(SummaryViewItemsInCart_value);
+
+        line = new QFrame(centralwidget);
+        line->setObjectName(QString::fromUtf8("line"));
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
+
+        verticalLayout->addWidget(line);
+
+        HeaderViewItemsInCart = new QLabel(centralwidget);
+        HeaderViewItemsInCart->setObjectName(QString::fromUtf8("HeaderViewItemsInCart"));
+        sizePolicy1.setHeightForWidth(HeaderViewItemsInCart->sizePolicy().hasHeightForWidth());
+        HeaderViewItemsInCart->setSizePolicy(sizePolicy1);
+        HeaderViewItemsInCart->setMaximumSize(QSize(16777215, 16777215));
+        QFont font5;
+        font5.setFamily(QString::fromUtf8("FreeMono"));
+        font5.setPointSize(15);
+        font5.setBold(false);
+        font5.setItalic(true);
+        font5.setWeight(50);
+        font5.setStrikeOut(false);
+        font5.setKerning(true);
+        HeaderViewItemsInCart->setFont(font5);
+        HeaderViewItemsInCart->setMargin(0);
+
+        verticalLayout->addWidget(HeaderViewItemsInCart);
+
         listViewItemsInCart = new QListView(centralwidget);
         listViewItemsInCart->setObjectName(QString::fromUtf8("listViewItemsInCart"));
         listViewItemsInCart->setEnabled(true);
-        QSizePolicy sizePolicy1(QSizePolicy::Ignored, QSizePolicy::Ignored);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(listViewItemsInCart->sizePolicy().hasHeightForWidth());
-        listViewItemsInCart->setSizePolicy(sizePolicy1);
-        QFont font3;
-        font3.setFamily(QString::fromUtf8("FreeMono"));
-        font3.setPointSize(16);
-        font3.setStyleStrategy(QFont::PreferDefault);
-        listViewItemsInCart->setFont(font3);
+        sizePolicy.setHeightForWidth(listViewItemsInCart->sizePolicy().hasHeightForWidth());
+        listViewItemsInCart->setSizePolicy(sizePolicy);
+        QFont font6;
+        font6.setFamily(QString::fromUtf8("FreeMono"));
+        font6.setPointSize(16);
+        font6.setStyleStrategy(QFont::PreferDefault);
+        listViewItemsInCart->setFont(font6);
         listViewItemsInCart->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-        horizontalLayout->addWidget(listViewItemsInCart);
+        verticalLayout->addWidget(listViewItemsInCart);
 
         root->setCentralWidget(centralwidget);
         menubar = new QMenuBar(root);
@@ -163,10 +217,10 @@ public:
         root->setMenuBar(menubar);
         toolBar = new QToolBar(root);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
-        QFont font4;
-        font4.setFamily(QString::fromUtf8("Ubuntu"));
-        font4.setPointSize(11);
-        toolBar->setFont(font4);
+        QFont font7;
+        font7.setFamily(QString::fromUtf8("Ubuntu"));
+        font7.setPointSize(11);
+        toolBar->setFont(font7);
         toolBar->setMovable(true);
         root->addToolBar(Qt::TopToolBarArea, toolBar);
 
@@ -243,7 +297,10 @@ public:
 #endif // QT_CONFIG(shortcut)
         actionBackup->setText(QCoreApplication::translate("root", "Backup", nullptr));
         actionSearch_for_Host->setText(QCoreApplication::translate("root", "Search for Host", nullptr));
-        menuFile->setTitle(QCoreApplication::translate("root", "File", nullptr));
+        SummaryViewItemsInCart_amount->setText(QCoreApplication::translate("root", "Total items in cart: ", nullptr));
+        SummaryViewItemsInCart_value->setText(QCoreApplication::translate("root", "Total value: ", nullptr));
+        HeaderViewItemsInCart->setText(QCoreApplication::translate("root", "Header", nullptr));
+        menuFile->setTitle(QCoreApplication::translate("root", "Menu", nullptr));
         menuList->setTitle(QCoreApplication::translate("root", "List", nullptr));
         menuHelp->setTitle(QCoreApplication::translate("root", "Help", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("root", "toolBar", nullptr));

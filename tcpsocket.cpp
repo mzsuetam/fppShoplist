@@ -61,6 +61,7 @@ QString TcpSocket::read(bool &recieved) const{
     loop.exec();
     if ( VOICE ) qDebug() << "Reading...";
     QString buff = socket->readAll();
+    if ( VOICE ) qDebug() << buff;
     recieved = true;
     if ( buff == "" ) recieved = false;
     return buff;
@@ -92,7 +93,7 @@ QString TcpSocket::searchLocalForHost(){
         // creating thread based classes SimpleTcpSocket for each ip
         //  each tries to acquire connection to the host ( more about that in void SimpleTcpSocket::run() )
         //  if connected - leaves ip; if not - sets it to ""
-        SimpleTcpSocket* searcher = new SimpleTcpSocket(local_ip+QString::number(i));
+        auto searcher = new SimpleTcpSocket(local_ip+QString::number(i));
         searchers.append(searcher);
         searcher->start();
     }
@@ -124,7 +125,7 @@ void TcpSocket::readyRead(){ if ( VOICE ) qDebug() << "incoming data..."; }
 
 SimpleTcpSocket::SimpleTcpSocket(QString ip){
     SERVER_IP = ip;
-    socket = new QTcpSocket(this);
+    socket = new QTcpSocket();
 
     connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
 }
@@ -132,6 +133,7 @@ SimpleTcpSocket::SimpleTcpSocket(QString ip){
 void SimpleTcpSocket::run(){
     if ( VOICE ) qDebug() << "SimpleTcpSocket connecting to " << SERVER_IP << "...";
 
+    // what generates ~500 red lines is below:
     socket->connectToHost(SERVER_IP, PORT); // try to connect to owned ip
 
     if(!socket->waitForConnected(CONNECTION_WAITING_TIME))

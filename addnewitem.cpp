@@ -108,7 +108,13 @@ void addNewItem::refreshList(){
         model_searched_items->insertRow(model_searched_items->rowCount());
         QModelIndex index = model_searched_items->index(i);
         label += searched_items[i].getCategory().rightJustified(5,' ') + "] "
-                + searched_items[i].getId().rightJustified(5,' ')+ " - " +  searched_items[i].getName();
+                + searched_items[i].getId().rightJustified(5,' ')+ " - "
+                + searched_items[i].getPrice().rightJustified(6,' ') + "zł - "
+                + searched_items[i].getName() + " ["
+                + searched_items[i].getUnit1()
+                //+ " " + searched_items[i].getUnit2()
+                + "]"
+                ;
         model_searched_items->setData(index, label);
     }
 
@@ -129,7 +135,7 @@ void addNewItem::on_pushButtonCancel_pressed()
 void addNewItem::on_pushButtonOk_pressed()
 {
     QString id = ui->inputID->toPlainText();
-    QString name;
+    QString name, unit1, unit2, price;
     QString _amount = ui->inputAmount->toPlainText().replace(',','.');
 
     bool amount_ok;
@@ -150,6 +156,9 @@ void addNewItem::on_pushButtonOk_pressed()
         if ( id == (*all_items)[i].getId() ){
             id_ok = true;
             name = (*all_items)[i].getName();
+            unit1 = (*all_items)[i].getUnit1();
+            unit2 = (*all_items)[i].getUnit2();
+            price = (*all_items)[i].getPrice();
             break;
         }
     }
@@ -160,7 +169,7 @@ void addNewItem::on_pushButtonOk_pressed()
     }
 
     // all data is correct at this point
-    root_ptr->addItemToList(amount,id,name);
+    root_ptr->addItemToList(amount,id,name,unit1,unit2,price);
     this->close();
 }
 
@@ -172,7 +181,7 @@ void addNewItem::on_inputID_textChanged()
         searched_items.clear();
         for ( int i=0; i<all_items->size();i++){
             if ( (*all_items)[i].search(input) ){
-                searched_items.append(Item((*all_items)[i].getId(),(*all_items)[i].getName(),(*all_items)[i].getCategory()));
+                searched_items.append(Item((*all_items)[i].getId(),(*all_items)[i].getName(),(*all_items)[i].getCategory(),(*all_items)[i].getUnit1(),(*all_items)[i].getUnit2(),(*all_items)[i].getPrice()));
             }
         }
     }

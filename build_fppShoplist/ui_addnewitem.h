@@ -39,7 +39,7 @@ public:
     {
         if (addNewItem->objectName().isEmpty())
             addNewItem->setObjectName(QString::fromUtf8("addNewItem"));
-        addNewItem->resize(1000, 600);
+        addNewItem->resize(1200, 600);
         horizontalLayout = new QHBoxLayout(addNewItem);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         verticalLayout = new QVBoxLayout();

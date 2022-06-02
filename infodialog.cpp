@@ -36,7 +36,8 @@ void InfoDialog::init(root *_root, QString mode){
                "After the impot user has permament access to all items and their stats. "
                "Items can be simply searched or inserted into main list, as if a recipt or invoice were made. "
                "The list can be transfered via internet to FppShoplist server and inserted to real receipt or invoice in FPP Firma++. "
-               ""
+               "To transfer client must be connected to the host computer. "
+               "To do that, turn on server application on host computer and then select Menu > Search for Host option in client application. "
                ;
     }
     else if ( mode == "Shortcuts" ){

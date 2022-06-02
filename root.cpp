@@ -32,6 +32,10 @@ root::root(QWidget *parent)
 
     // importing settings:
     loadSettings();
+
+    // refresh list:
+    ui->HeaderViewItemsInCart->setText("  n: AMOUNT - PRICE SUM -    ID - NAME [PRICE PER UNIT]");
+    refreshList();
 }
 
 root::~root()
@@ -42,22 +46,32 @@ root::~root()
 
 void root::listItemClicked(const QModelIndex &index){
     int id = index.row();
-    if ( id == selected_item || id < 0 || id > items_in_chart.size() -1 ) return;
+    if ( id == selected_item || id < 0 || id > items_in_cart.size() -1 ) return;
     selected_item = id;
 }
 
 void root::refreshList(){
+    double sum=0;
     // clear model
-    model_items_in_cart->removeRows( 0, model_items_in_cart->rowCount() );
+    model_items_in_cart->removeRows( 0,model_items_in_cart->rowCount() );
     // add searched elements
-    for (int i=0; i<items_in_chart.size(); i++){
+    for (int i=0; i<items_in_cart.size(); i++){
         QString label = "";
+        int row_cost = items_in_cart[i].getPrice().toDouble()*items_in_cart[i].getAmount();
+        sum += row_cost;
         model_items_in_cart->insertRow(model_items_in_cart->rowCount());
         QModelIndex index = model_items_in_cart->index(i);
-        label += QString::number(i).rightJustified(3, ' ')
-            + ": " + QString::number(items_in_chart[i].getAmount()).rightJustified(5, ' ')
-            + " - " + items_in_chart[i].getId().rightJustified(10, ' ')
-            + " - " +  items_in_chart[i].getName();
+        label += QString::number(i+1).rightJustified(3, ' ')
+            + ": " + QString::number( items_in_cart[i].getAmount() ).rightJustified(6, ' ') + " - "
+            //+ "[" + items_in_cart[i].getCategory().rightJustified(5,' ') + "] "
+            + QString::number( row_cost ).rightJustified(6,' ') + "zł - "
+            + items_in_cart[i].getId().rightJustified(5,' ')+ " - "
+            + items_in_cart[i].getName() + " ["
+            + items_in_cart[i].getPrice() + "zł/"
+            + items_in_cart[i].getUnit1()
+            //+ " " + items_in_cart[i].getUnit2()
+            + "]"
+            ;
         model_items_in_cart->setData(index, label);
 
         // @TODO: add unit1, unit2 and price displaying
@@ -65,12 +79,16 @@ void root::refreshList(){
 
     // connecting pressing items in the list with function
     connect( ui->listViewItemsInCart, SIGNAL(clicked(const QModelIndex &) ), this, SLOT( listItemClicked(const QModelIndex &) ) );
+
+    // refreshing summary
+    ui->SummaryViewItemsInCart_amount->setText("Total items in cart: " + QString::number(items_in_cart.size()));
+    ui->SummaryViewItemsInCart_value->setText( "Total value: " + QString::number(sum)+ "zł");
 }
 
-void root::addItemToList( double _amount, QString _id, QString _name){
+void root::addItemToList(double _amount, QString _id, QString _name, QString _unit1, QString  _unit2, QString _price){
     // creating item
-    ItemInCart new_item(_amount,_id,_name);
-    items_in_chart.append(new_item);
+    ItemInCart new_item(_amount,_id,_name,_unit1,_unit2,_price);
+    items_in_cart.append(new_item);
 
     refreshList();
 }
@@ -221,7 +239,7 @@ bool root::backupItemList(){
         dir.mkpath(".");
     QString epath = QDir::currentPath() + "/resources/backup.list";
     // cannot use resources because they are stored in exe in binary files in read-only for the exe
-    if ( exportItemList(epath, items_in_chart) ) return true;
+    if ( exportItemList(epath, items_in_cart) ) return true;
     return false;
 }
 
@@ -235,6 +253,7 @@ void root::saveSettings(){
        // default_ip:
        stream << "default_ip:" << server_ip << '\n';
        exportFile.close();
+       // other settings:
     }
     else{
         QMessageBox::critical(this, "Error!", "Error saving the default settings!");
@@ -266,7 +285,7 @@ void root::loadSettings(){
 void root::on_actionImport_data_from_file_triggered()
 {
     // cannot have data in cart
-    if ( items_in_chart.size() > 0 ){
+    if ( items_in_cart.size() > 0 ){
         QMessageBox::critical(this, "Error!", "List must be empty to import new data!");
         return;
     }
@@ -301,26 +320,26 @@ void root::on_actionInsert_triggered()
 void root::on_actionClear_triggered()
 {
     model_items_in_cart->removeRows(0,model_items_in_cart->rowCount());
-    items_in_chart.clear();
+    items_in_cart.clear();
 }
 
 void root::on_actionDelete_triggered()
 {
-    if ( selected_item < 0 || selected_item > items_in_chart.size() -1 ) return;
+    if ( selected_item < 0 || selected_item > items_in_cart.size() -1 ) return;
 
     model_items_in_cart->removeRows(selected_item,1);
-    items_in_chart.removeAt(selected_item);
+    items_in_cart.removeAt(selected_item);
 
     refreshList();
 }
 
 void root::on_actionEdit_triggered()
 {
-    if ( selected_item < 0 || selected_item > items_in_chart.size() -1 ) return;
+    if ( selected_item < 0 || selected_item > items_in_cart.size() -1 ) return;
 
-    int _n = items_in_chart.size();
-    QString _id = items_in_chart[selected_item].getId();
-    double _amount = items_in_chart[selected_item].getAmount();
+    int _n = items_in_cart.size();
+    QString _id = items_in_cart[selected_item].getId();
+    double _amount = items_in_cart[selected_item].getAmount();
 
     addNewItem new_window;
     new_window.setModal(true);
@@ -328,7 +347,7 @@ void root::on_actionEdit_triggered()
     setEnabled(false);
     new_window.exec();
 
-    if ( _n != items_in_chart.size() ){
+    if ( _n != items_in_cart.size() ){
         on_actionDelete_triggered();
     }
 
@@ -353,10 +372,12 @@ void root::on_actionTransfer_triggered()
         return;
     }
 
-    if ( items_in_chart.size() == 0 ){
+    if ( items_in_cart.size() == 0 ){
         QMessageBox::critical(this, "Error!", "List for transfer cannot be empty!");
         return;
     }
+
+    setEnabled(false);
 
     // TRANSFER SECTION:
     TcpSocket *socket = new TcpSocket(server_ip);
@@ -365,6 +386,7 @@ void root::on_actionTransfer_triggered()
     if ( !socket->isConnected() ){ // if failed to aquire connection
         QMessageBox::critical(this, "Error!", "Unable to connect to Host computer!");
         delete socket;
+        setEnabled(true);
         return;
     }
     // if connection aquired:
@@ -375,14 +397,15 @@ void root::on_actionTransfer_triggered()
         QString server_status = socket->read(ok); // get server status
         if ( ok && server_status == "0" ){ // 0 - server ready
             socket->writeDataMsg(); // inform server about data transfer
-            socket->write("n:"+QString::number(items_in_chart.size())); // how many products
-            for (int i=0; i<items_in_chart.size(); i++){ // sending all produckts
-                socket->write(items_in_chart[i].getId() + ":" + QString::number(items_in_chart[i].getAmount())); // in format id:amount
+            socket->write("n:"+QString::number(items_in_cart.size())); // how many products
+            for (int i=0; i<items_in_cart.size(); i++){ // sending all produckts
+                socket->write(items_in_cart[i].getId() + ":" + QString::number(items_in_cart[i].getAmount())); // in format id:amount
             }
             socket->write("e:"); // inform about the end
             QString server_transfer_status = socket->read(ok); // get server response about the stattus
             if ( ok && server_transfer_status == "1" ){ // 1 - error, transfer corrupted
                 QMessageBox::critical(this, "Error!", "Data transfer corrupted!");
+                setEnabled(true);
                 return;
             }
             else if ( ok ){
@@ -390,28 +413,34 @@ void root::on_actionTransfer_triggered()
             }
             else{ // ok == false
                 QMessageBox::critical(this, "Error!", "Host computer not responding!");
+                setEnabled(true);
                 return;
             }
         }
         else if ( ok && server_status == "1" ){
             QMessageBox::critical(this, "Error!", "Host computer is not expecting transfer!\nTry CTRL+Ins");
             socket->writeDisconnectMsg();
+            setEnabled(true);
             return;
         }
         else if ( ok && server_status == "2" ){
             QMessageBox::critical(this, "Error!", "Host computer busy!");
             socket->writeDisconnectMsg();
+            setEnabled(true);
             return;
         }
         else { // ok == false
             QMessageBox::critical(this, "Error!", "Host computer not responding!");
+            setEnabled(true);
             return;
         }
     }
     else { // ( recieved && ans=="Connection to FppShoplist host validated!" ) == false
         QMessageBox::critical(this, "Error!", "Connection error!");
+        setEnabled(true);
         return;
     }
+    setEnabled(true);
     delete socket;
 }
 
@@ -419,7 +448,7 @@ void root::on_actionRestore_triggered()
 {
     QDir dir("resources");
     QString epath = QDir::currentPath() + "/resources/backup.list";
-    if ( !dir.exists() || !importItemList(epath, items_in_chart) ){
+    if ( !dir.exists() || !importItemList(epath, items_in_cart) ){
         QMessageBox::critical(this, "Error!", "Unable to access backup file!");
     }
     refreshList();

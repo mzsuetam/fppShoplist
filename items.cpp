@@ -5,8 +5,8 @@
 
 ////////////////////////////////////////////////
 
-ItemInCart::ItemInCart( double _amount, QString _id, QString _name)
-    :Item(_id,_name),amount(_amount){}
+//ItemInCart::ItemInCart( double _amount, QString _id, QString _name)
+//    :Item(_id,_name),amount(_amount){}
     //:,amount(_amount){ id = _id; name = _name } // lista inicjalizacyjna jest wywoływana przed konstruktorem klasy po której się dziedziczy
 
 
@@ -15,8 +15,8 @@ ItemInCart::ItemInCart(double _amount, QString _id, QString _name, QString _unit
 
 //////////////////////////////////////////////////
 
-Item::Item(QString _id, QString _name):id(_id),name(_name),category(""){}
-Item::Item(QString _id, QString _name, QString _category):id(_id),name(_name),category(_category){}
+//Item::Item(QString _id, QString _name):id(_id),name(_name),category(""){}
+//Item::Item(QString _id, QString _name, QString _category):id(_id),name(_name),category(_category){}
 Item::Item(QString _id, QString _name, QString _category, QString _unit1, QString  _unit2, QString _price)
     :id(_id),name(_name),category(_category),unit1(_unit1),unit2(_unit2),price(_price){}
 

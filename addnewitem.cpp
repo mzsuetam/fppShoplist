@@ -177,7 +177,7 @@ void addNewItem::on_inputID_textChanged()
 {
     QString input = ui->inputID->toPlainText();
     if ( input != "" ){
-        if ( input.length() < 3 ) return;
+        //if ( input.length() < 3 ) return;
         searched_items.clear();
         for ( int i=0; i<all_items->size();i++){
             if ( (*all_items)[i].search(input) ){

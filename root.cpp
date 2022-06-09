@@ -11,6 +11,10 @@
 #include <QMessageBox>
 #include <QList>
 
+// @TODO:
+// auto-maximise - done, to settings?
+// input from utf8 files on windows32bit - done, to check
+
 
 root::root(QWidget *parent)
     : QMainWindow(parent)
@@ -32,6 +36,7 @@ root::root(QWidget *parent)
 
     // importing settings:
     loadSettings();
+    showMaximized();
 
     // refresh list:
     ui->HeaderViewItemsInCart->setText("  n: AMOUNT - PRICE SUM -    ID - NAME [PRICE PER UNIT]");
@@ -57,7 +62,7 @@ void root::refreshList(){
     // add searched elements
     for (int i=0; i<items_in_cart.size(); i++){
         QString label = "";
-        int row_cost = items_in_cart[i].getPrice().toDouble()*items_in_cart[i].getAmount();
+        double row_cost = items_in_cart[i].getPrice().toDouble()*items_in_cart[i].getAmount();
         sum += row_cost;
         model_items_in_cart->insertRow(model_items_in_cart->rowCount());
         QModelIndex index = model_items_in_cart->index(i);
@@ -99,6 +104,7 @@ bool root::importItemList(QString path, QList<Item>& list){
     {
        list.clear();
        QTextStream in(&inputFile);
+       in.setCodec("windows-1250");
        while (!in.atEnd())
        {
           QString line = in.readLine();
@@ -157,6 +163,7 @@ bool root::importItemList(QString path, QList<ItemInCart>& list){
     {
        list.clear();
        QTextStream in(&inputFile);
+       in.setCodec("windows-1250");
        while (!in.atEnd())
        {
            QString line = in.readLine();
@@ -204,6 +211,7 @@ bool root::exportItemList(QString path, QList<Item>& list){
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
+           stream.setCodec("windows-1250");
            stream << '"' << list[i].getCategory() << "\",\"" << list[i].getId() << "\",\"" << list[i].getName() << "\",\""
                    << list[i].getUnit1() << "\",\"" << list[i].getUnit2() << "\",\"" << list[i].getPrice() << '"' << Qt::endl;
        }
@@ -221,6 +229,7 @@ bool root::exportItemList(QString path, QList<ItemInCart>& list){
     if ( exportFile.open(QIODevice::WriteOnly) ){
        for (int i=0; i<list.size();i++){
            QTextStream stream(&exportFile);
+           stream.setCodec("windows-1250");
            stream << '"' << list[i].getAmount() << "\",\"" << list[i].getId() << "\",\"" << list[i].getName() << "\",\""
                   << list[i].getUnit1() << "\",\"" << list[i].getUnit2() << "\",\"" << list[i].getPrice() << '"' << Qt::endl;
        }
@@ -250,6 +259,7 @@ void root::saveSettings(){
     QFile exportFile(QDir::currentPath() + "/resources/settings.cfg");
     if ( exportFile.open(QIODevice::WriteOnly) ){
        QTextStream stream(&exportFile);
+       stream.setCodec("UTF-8");
        // default_ip:
        stream << "default_ip:" << server_ip << '\n';
        exportFile.close();
@@ -265,6 +275,7 @@ void root::loadSettings(){
     if (inputFile.open(QIODevice::ReadOnly))
     {
        QTextStream in(&inputFile);
+       in.setCodec("UTF-8");
        while (!in.atEnd())
        {
           QString line = in.readLine();
@@ -321,6 +332,7 @@ void root::on_actionClear_triggered()
 {
     model_items_in_cart->removeRows(0,model_items_in_cart->rowCount());
     items_in_cart.clear();
+    refreshList();
 }
 
 void root::on_actionDelete_triggered()

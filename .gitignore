@@ -53,5 +53,5 @@ compile_commands.json
 
 *_qmlcache.qrc
 
-build_*
-build_*/*.*
+build_fppShoplist/
+fppShoplist_release_*/

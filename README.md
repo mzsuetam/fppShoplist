@@ -1,7 +1,7 @@
 # FppShoplist  
 _____
 ## About: 
-Version: 2.0.0-a.1\
+Version: 2.0.1-b.1"\
 Author: Mateusz Mazur 
 #### Description:
 FppShoplist is an addition to FPP Firma++ and is intended to extend

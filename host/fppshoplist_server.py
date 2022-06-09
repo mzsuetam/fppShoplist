@@ -113,8 +113,7 @@ def printData(id,n,a):
             kb_print_k(Key.insert)
         else:
             kb_print_k(Key.enter)
-    elif MODE == 1: # use keyboard
-        kb_printf_str(str(id))
+        kb_printf_str(id)
         kb_print_k(Key.enter)
         kb_printf_str(str(n)) # n - amount
         kb_print_k(Key.enter)
@@ -143,7 +142,7 @@ def compileAll():
     global accept_conn
     accept_conn=False
     #print(len(items_list)) #
-    if not MODE:
+    if MODE==2:
         kb_printf_str("--------------\n")
     n=0
     for itm in items_list:
@@ -276,7 +275,7 @@ def on_press(key):
         keys_pressed.append(key)
 
 def on_release(key):
-    if MODE:
+    if MODE==0 or MODE==1 or MODE==2:
         if len(keys_pressed)==2 and (FN_KEY_1 in keys_pressed or FN_KEY_2 in keys_pressed) and EXIT_KEY in keys_pressed:
             keys_pressed.remove(key)
             return False
